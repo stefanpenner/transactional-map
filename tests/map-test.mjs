@@ -1,10 +1,10 @@
-'use strict';
+import chai from 'chai';
+import Map from '../';
+import Transaction from '../lib/transaction';
 
-const expect = require('chai').expect;
+const { expect } = chai;
 
 describe('Map', function() {//{
-  const Map = require('../');
-  const Transaction = require('../lib/transaction');
 
   it('is', function() {
     let map = new Map();

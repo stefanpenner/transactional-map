@@ -1,11 +1,10 @@
-'use strict'
+import chai from 'chai';
+import Value from '../lib/value';
+import Record from '../lib/record';
 
-const expect = require('chai').expect;
+const { expect } = chai;
 
 describe('Value', function() {
-  const Value = require('../lib/value');
-  const Record = require('../lib/record');
-
   it('works', function() {
     const value = new Value();
 

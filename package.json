@@ -4,10 +4,14 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "chai": "^4.2.0",
-    "mocha": "^5.2.0"
+    "global": "^4.3.2",
+    "mocha-esm": "^1.1.1",
+    "qunit": "^2.9.1"
   },
   "scripts": {
-    "test": "mocha tests"
+    "test": "mocha-esm ./tests/*.mjs"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0"
   }
 }

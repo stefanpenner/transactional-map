@@ -1,8 +1,6 @@
-'use strict';
+import InternalStore from './lib/internal-store';
 
-const InternalStore = require('./lib/internal-store');
-
-module.exports = class Map {
+export default class Map {
   constructor() {
     this._internal = new InternalStore();
   }
