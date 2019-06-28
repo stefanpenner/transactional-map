@@ -1,4 +1,9 @@
+import Record from './record';
+
 export default class Value {
+  private _record?: Record;
+  private _records?: Record[];
+  private _isSorted = false;
   constructor() {
     // n = 1, vs n > 1 perf tweak (avoid array allocation, if we only typically end up with n = 1)
     this._record = undefined;
@@ -6,7 +11,7 @@ export default class Value {
     this._isSorted = false;
   }
 
-  add(record) {
+  add(record: Record) {
     if (this._records === undefined) {
       if (this._record === undefined) {
         this._record = record;
@@ -21,7 +26,7 @@ export default class Value {
     }
   }
 
-  has(xid) {
+  has(xid: number) {
     return !!this.get(xid);
   }
 
@@ -31,49 +36,55 @@ export default class Value {
   // Ultimately we should likely support many options, but the question is "what should be default".
   _ensureSorted() {
     if (this._isSorted === true) { return; }
+    if (this._records === undefined) {
+      throw new TypeError('EWUT');
+    }
     this._records.sort((a, b) => b.xmin - a.xmin);
     this._isSorted = true;
   }
 
-  delete(xid) {
+  delete(xid: number) {
     if (this._record === undefined && this._records === undefined) {
       return undefined;
     }
 
-    let internal = this._record;
+    const internal = this._record;
 
     if (internal !== undefined) {
       internal.delete(xid);
     } else {
       let records = this._records;
+      if (records === undefined) {
+        throw new TypeError('unexpected undefined');
+      }
       for (let i = 0; i < records.length; i++) {
         records[i].delete(xid);
       }
     }
   }
 
-  _find(xid) {
-    if (this._record === undefined && this._records === undefined) {
-      return undefined;
-    }
-
+  _find(xid: number) {
+    let records = this._records;
     let internal = this._record;
+
+    if (internal === undefined && records === undefined) { return; }
 
     if (internal !== undefined) {
       return internal.isVisible(xid) ? internal : undefined;
-    } else {
+    } else if (records !== undefined) {
       this._ensureSorted();
-      let records = this._records;
       for (let i = 0; i < records.length; i++) {
         let record = records[i];
         if (record.isVisible(xid)) {
           return record;
         }
       }
+    } else {
+      throw new TypeError('EWUT')
     }
   }
 
-  get(xid) {
+  get(xid: number) {
     return this._find(xid);
   }
 };

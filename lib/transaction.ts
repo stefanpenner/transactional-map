@@ -1,15 +1,18 @@
 import Record from './record';
 
-function throwCommited(id, functionName) {
+function throwCommited(id: number, functionName: string) {
   throw new Error(`Transaction#${id}: attempted '${functionName}', but has already been committed`);
 }
 
 export default class Transaction {
-  constructor({ map, id }) {
+  private _store: any;
+  public _local = Object.create(null);
+  private _id: number;
+  private _commited = false;
+
+  constructor({ map, id }: { map: any, id: any}) {
     this._store = map;
-    this._local = Object.create(null);
     this._id = id; // xmax this transaction can see
-    this._commited = false;
   }
 
   get id() {
@@ -24,7 +27,7 @@ export default class Transaction {
     return this._commited === true;
   }
 
-  has(key) {
+  has(key: string) {
     if (this.isCommited) { throwCommited(this._id, 'has'); }
 
     let record = this._local[key];
@@ -38,7 +41,7 @@ export default class Transaction {
     }
   }
 
-  get(key) {
+  get(key: string) {
     if (this.isCommited) { throwCommited(this._id, 'get'); }
     let record = this._local[key];
 
@@ -53,12 +56,12 @@ export default class Transaction {
     }
   }
 
-  set(key, value) {
+  set(key: string, value: any) {
     if (this.isCommited) { throwCommited(this._id, 'set'); }
     this._local[key] = new Record(value);
   }
 
-  delete(key) {
+  delete(key: string) {
     if (this.isCommited) { throwCommited(this._id, 'delete'); }
     this._local[key] = Record.DELETED;
   }

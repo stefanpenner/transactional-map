@@ -3,10 +3,8 @@ import Record from './record';
 import Value from './value';
 
 export default  class InternalStore {
-  constructor() {
-    this._local = Object.create(null);
-    this._xnext = 1;
-  }
+  private _local = Object.create(null);
+  private _xnext = 1;
 
   transaction() {
     return new Transaction({
@@ -15,8 +13,8 @@ export default  class InternalStore {
     });
   }
 
-  has(xid, key) {
-    let value = this._local[key];
+  has(xid: number, key: string) {
+    const value = this._local[key];
 
     if (value === undefined)  {
       return false;
@@ -25,8 +23,8 @@ export default  class InternalStore {
     return value.has(xid);
   }
 
-  get(xid, key) {
-    let value = this._local[key];
+  get(xid: number, key: string) {
+    const value = this._local[key];
 
     if (value === undefined)  {
       return undefined;
@@ -35,11 +33,11 @@ export default  class InternalStore {
     return value.get(xid);
   }
 
-  commit(transaction) {
+  commit(transaction: Transaction) {
     const local = transaction._local;
     for (let key in local) {
+      const record = local[key];
       let value = this._local[key];
-      let record = local[key];
 
       if (record === Record.DELETED) {
         if (value !== undefined) {

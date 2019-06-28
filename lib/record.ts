@@ -3,10 +3,13 @@ function throwRecordAlreadyCommited() {
 }
 
 export default class Record {
-  constructor(value) {
+  private static __DELETED: any;
+
+  private _value: any;
+  private _xmin = 0;
+  private _xmax = Infinity;
+  constructor(value?: any) {
     this._value = value;
-    this._xmin = 0;
-    this._xmax = Infinity;
   }
 
   static get DELETED() {
@@ -19,20 +22,20 @@ export default class Record {
     return record;
   }
 
-  commit(xid) {
+  commit(xid: number) {
     if (this.isCommited) { throwRecordAlreadyCommited(); }
     this._xmin = xid;
   }
 
-  isVisible(xid) {
+  isVisible(xid: number) {
     return this.xmin <= xid && xid < this.xmax;
   }
 
-  delete(xid) {
+  delete(xid: number) {
     if (this.isVisible(xid)) { this._xmax = xid; }
   }
 
-  static isDeletedSentinal(record) {
+  static isDeletedSentinal(record: any) {
     return this.__DELETED === record;
   }
 
